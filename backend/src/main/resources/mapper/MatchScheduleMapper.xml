@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kleague.backend.mapper.MatchScheduleMapper">
+
+    <resultMap id="matchResultMap" type="MatchSchedule">
+        <id property="id" column="id"/>
+        <result property="round" column="round"/>
+        <result property="matchDate" column="match_date"/>
+        <result property="homeTeamId" column="home_team_id"/>
+        <result property="awayTeamId" column="away_team_id"/>
+        <result property="stadiumId" column="stadium_id"/>
+        <result property="status" column="status"/>
+        <result property="homeScore" column="home_score"/>
+        <result property="awayScore" column="away_score"/>
+        <result property="homeTeamName" column="home_team_name"/>
+        <result property="awayTeamName" column="away_team_name"/>
+        <result property="homeTeamShortName" column="home_team_short_name"/>
+        <result property="awayTeamShortName" column="away_team_short_name"/>
+        <result property="stadiumName" column="stadium_name"/>
+        <result property="stadiumCity" column="stadium_city"/>
+        <result property="stadiumNx" column="stadium_nx"/>
+        <result property="stadiumNy" column="stadium_ny"/>
+    </resultMap>
+
+    <sql id="selectBase">
+        SELECT
+            m.id, m.round, m.match_date, m.home_team_id, m.away_team_id,
+            m.stadium_id, m.status, m.home_score, m.away_score,
+            ht.name AS home_team_name, ht.short_name AS home_team_short_name,
+            awt.name AS away_team_name, awt.short_name AS away_team_short_name,
+            s.name AS stadium_name, s.city AS stadium_city,
+            s.nx AS stadium_nx, s.ny AS stadium_ny
+        FROM match_schedule m
+        JOIN team ht ON m.home_team_id = ht.id
+        JOIN team awt ON m.away_team_id = awt.id
+        LEFT JOIN stadium s ON m.stadium_id = s.id
+    </sql>
+
+    <select id="findAll" resultMap="matchResultMap">
+        <include refid="selectBase"/>
+        ORDER BY m.match_date ASC
+    </select>
+
+    <select id="findByRound" resultMap="matchResultMap">
+        <include refid="selectBase"/>
+        WHERE m.round = #{round}
+        ORDER BY m.match_date ASC
+    </select>
+
+    <select id="findByTeamId" resultMap="matchResultMap">
+        <include refid="selectBase"/>
+        WHERE m.home_team_id = #{teamId} OR m.away_team_id = #{teamId}
+        ORDER BY m.match_date ASC
+    </select>
+
+    <select id="findById" resultMap="matchResultMap">
+        <include refid="selectBase"/>
+        WHERE m.id = #{id}
+    </select>
+
+</mapper>
