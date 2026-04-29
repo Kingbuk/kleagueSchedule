@@ -51,3 +51,6 @@ npm run dev
 ## 개발자 정보
 - React, Spring Boot, MyBatis, PostgreSQL/MySQL 경험 보유
 - 웹으로 먼저 개발 후 모바일 앱으로 확장 계획
+
+## TODO LIST (추후에 만들예정)
+- 라이브스코어 API 연동 후 실시간 경기 상황 볼 수 있게 추가.

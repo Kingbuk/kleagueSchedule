@@ -7,6 +7,7 @@ import MatchCard from './components/MatchCard'
 import MatchModal from './components/MatchModal'
 import OnboardingScreen from './components/OnboardingScreen'
 import BottomNav from './components/BottomNav'
+import ScrollMonthIndicator from './components/ScrollMonthIndicator'
 
 export default function App() {
   const [favoriteTeamId, setFavoriteTeamId] = useState<string | null>(
@@ -49,6 +50,13 @@ export default function App() {
     })
     return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b))
   }, [matches])
+
+  const months = useMemo<string[]>(() => {
+    const seen = new Set<string>()
+    return groupedMatches
+      .map(([k]) => k.slice(0, 7))
+      .filter((m) => { if (seen.has(m)) return false; seen.add(m); return true })
+  }, [groupedMatches])
 
   const firstUpcomingKey = useMemo<string | null>(() => {
     const now = new Date()
@@ -153,6 +161,7 @@ export default function App() {
               <section
                 key={dateKey}
                 data-upcoming={isFirstUpcoming ? 'true' : undefined}
+                data-month={dateKey.slice(0, 7)}
                 className={isPast ? 'opacity-50' : ''}
               >
                 <div className="flex items-center gap-3 mb-3">
@@ -160,7 +169,9 @@ export default function App() {
                     {formatSectionDate(dateKey)}
                   </span>
                   <div className="flex-1 h-px bg-slate-200" />
-                  <span className="text-xs text-slate-400 shrink-0">{dayMatches.length}경기</span>
+                  {activeTab === 'all' && (
+                    <span className="text-xs text-slate-400 shrink-0">{dayMatches.length}경기</span>
+                  )}
                 </div>
                 <div className="flex flex-col gap-2.5">
                   {dayMatches.map((match) => (
@@ -179,6 +190,7 @@ export default function App() {
         favoriteTeamShortName={favoriteTeam?.shortName}
       />
 
+      <ScrollMonthIndicator months={months} />
       <MatchModal match={selectedMatch} onClose={() => setSelectedMatch(null)} />
     </div>
   )
